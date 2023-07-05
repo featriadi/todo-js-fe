@@ -1,18 +1,21 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Todo from './Todo';
+import { useSelector, useDispatch } from "react-redux";
+import { getTodo } from "../redux/reducers/todo";
 
 function TodoList() {
-  const todos = [
-    { id: 1, note: 'Makan enak sampe kenyang', completed: false },
-    { id: 2, note: 'Mandi sampe wangi', completed: false },
-    { id: 3, note: 'Nafas biar tetep hidup', completed: true },
-  ]
+  const dispatch = useDispatch();
+  const todos = useSelector((state) => state.todos);
+
+  useEffect(() => {
+    dispatch(getTodo());
+  }, [dispatch]);
 
   return (
     <div className="row d-flex justify-content-center">
       {
         todos.map((todo) => (
-          <Todo key={todo.id} note={todo.note} completed={todo.completed} />
+          <Todo _id={todo._id} note={todo.note} completed={todo.completed} />
         ))
       }
     </div>
