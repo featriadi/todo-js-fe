@@ -1,9 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 export const getTodo = createAsyncThunk(
-    'todos/getTodo',
-    async () => {
-        const res = await fetch('http://localhost:8000/');
+    'getTodo',
+    async (payload) => {
+        const data = new URLSearchParams();
+        data.append('completed', true)
+
+        const res = await fetch(`https://todo-js-be-production.up.railway.app${ payload.complete === 0 || payload.complete === 1 ? `?completed=${payload.complete}` : '' }`);
         if (res.ok) {
             const todos = await res.json();
             return { todos };
@@ -12,9 +15,9 @@ export const getTodo = createAsyncThunk(
 );
 
 export const addTodo = createAsyncThunk(
-    'todos/addTodo',
+    'addTodo',
     async (payload) => {
-        const res = await fetch('http://localhost:8000/', {
+        const res = await fetch('https://todo-js-be-production.up.railway.app/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -32,9 +35,9 @@ export const addTodo = createAsyncThunk(
 )
 
 export const completeTodo = createAsyncThunk(
-    'todos/completeTodo',
+    'completeTodo',
     async (payload) => {
-        const res = await fetch(`http://localhost:8000/${payload._id}`, {
+        const res = await fetch(`https://todo-js-be-production.up.railway.app/${payload._id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -43,24 +46,31 @@ export const completeTodo = createAsyncThunk(
                 note: payload.note,
                 completed: payload.completed
             })
-        })
+        });
 
         if (res.ok) {
           const todo = await res.json();
-          return { _id: todo._id, completed: todo.completed }
+          return { _id: todo._id, note: todo.note, completed: todo.completed }
         }
     } 
 );
 
+export const deleteTodo = createAsyncThunk(
+    'deleteTodo',
+    async (payload) => {
+        const res = await fetch(`https://todo-js-be-production.up.railway.app/${payload._id}`, {
+            method: 'DELETE'
+        });
+
+        if (res.ok) {
+            return { _id: payload._id};
+        }
+    }
+)
+
 export const todos = createSlice({
     name: 'todos',
     initialState: [],
-    reducers: {
-        toggleComplete: (state, action) => {
-			const index = state.findIndex((todo) => todo.id === action.payload.id);
-			state[index].completed = action.payload.completed;
-		},
-    },
     extraReducers: {
         [getTodo.fulfilled]: (state, action) => {
             return action.payload.todos;
@@ -71,11 +81,11 @@ export const todos = createSlice({
         [completeTodo.fulfilled]: (state, action) => {
             const index = state.findIndex((todo) => todo._id === action.payload._id);
 			state[index].completed = action.payload.completed;
+        },
+        [deleteTodo.fulfilled]: (state, action) => {
+            return state.filter((todo) => todo._id !== action.payload._id);
         }
     }
 })
 
-export const {
-    toggleComplete
-} = todos.actions;
 export default todos.reducer;

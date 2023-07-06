@@ -1,6 +1,3 @@
-import './assets/bootstrap/css/bootstrap.min.css';
-import './assets/style/App.css'
-
 import AddTodo from './components/AddTodo';
 import TodoList from './components/TodoList';
 

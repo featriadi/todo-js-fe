@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch } from "react-redux";
-import { addTodo } from '../redux/reducers/todo';
+import { addTodo } from '../redux/todoSlice';
 
 function AddTodo() {
   const [value, setValue] = useState();
@@ -25,7 +25,6 @@ function AddTodo() {
                     type="text"
                     className="form-control form-control-lg"
                     placeholder="What to do"
-                    value={value}
                     onChange={(event) => setValue(event.target.value)}
                 />
                 <button 

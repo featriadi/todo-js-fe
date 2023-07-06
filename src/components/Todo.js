@@ -1,12 +1,16 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { completeTodo } from "../redux/reducers/todo";
+import { completeTodo, deleteTodo } from "../redux/todoSlice";
 
 const Todo = ({ _id, note, completed }) => {
   const dispatch = useDispatch();
 
-  const todoCompleted = () => {
+  const todoCompleteHandler = () => {
     dispatch(completeTodo({ _id: _id, note: note, completed: !completed }));
+  }
+
+  const deleteTodoHandler = () => {
+    dispatch(deleteTodo({ _id: _id }));
   }
 
   return (
@@ -19,15 +23,15 @@ const Todo = ({ _id, note, completed }) => {
                 type="checkbox"
                 className="form-check-input"
                 defaultChecked={completed}
-                onClick={todoCompleted}
+                onClick={todoCompleteHandler}
               ></input>
               <label className={`form-check-label${completed ? ' todo-done' : ''}`}>
                 {note}
               </label>
             </div>
             <div className="todo-button">
-              <button className="btn btn-light" type="button">Edit</button>
-              <button className="btn btn-danger" type="button">Delete</button>
+              <button className="btn btn-light">Edit</button>
+              <button className="btn btn-danger" onClick={deleteTodoHandler}>Delete</button>
             </div>
           </div>
         </div>  
